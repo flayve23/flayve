@@ -1,0 +1,31 @@
+{
+  "query": "SELECT id, openId, name, email, role FROM users WHERE openId LIKE 'test-%' ORDER BY id DESC;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3YXoXGPLXt3wWhf.root --database nqydgfj3CzwtjtyHoTRdFv --execute SELECT id, openId, name, email, role FROM users WHERE openId LIKE 'test-%' ORDER BY id DESC;",
+  "rows": [
+    {
+      "id": "540003",
+      "openId": "test-admin-001",
+      "name": "Admin Flayve",
+      "email": "admin@test.com",
+      "role": "admin"
+    },
+    {
+      "id": "540002",
+      "openId": "test-viewer-001",
+      "name": "João Cliente",
+      "email": "viewer@test.com",
+      "role": "user"
+    },
+    {
+      "id": "540001",
+      "openId": "test-streamer-001",
+      "name": "Mariana Silva",
+      "email": "streamer@test.com",
+      "role": "user"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\trole\n540003\ttest-admin-001\tAdmin Flayve\tadmin@test.com\tadmin\n540002\ttest-viewer-001\tJoão Cliente\tviewer@test.com\tuser\n540001\ttest-streamer-001\tMariana Silva\tstreamer@test.com\tuser\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

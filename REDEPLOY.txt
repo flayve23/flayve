@@ -1,0 +1,3 @@
+REDEPLOY TIMESTAMP: 2025-12-06T12:20:00Z
+BUILD VERSION: 27a86633
+CHANGES: serveStatic rewritten with fs.readFileSync()

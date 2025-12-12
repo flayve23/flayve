@@ -1,0 +1,38 @@
+{
+  "query": "\nDELETE FROM users WHERE username IN ('streamer_test', 'viewer_test', 'admin_test');\n\nINSERT INTO users (openId, username, email, passwordHash, passwordSalt, emailVerified, role, loginMethod, createdAt, updatedAt, lastSignedIn) VALUES\n  ('user-e6b2c2389fafb56e', 'streamer_test', 'streamer@test.com', '5f34e5daffb5d58486bcd0913d4802bcf34a51f444e003ab742995e68fdab15d', '666b56b26a013a10af4c7a61ce88a6a2', 1, 'streamer', 'email', NOW(), NOW(), NOW()),\n  ('user-c74414588eab6ff9', 'viewer_test', 'viewer@test.com', '4d64c54006198f11babe517c6d2af84199aeefdbb2a32bfbd2f9d7d84501171b', '4369dd29251205b87297a123c6dfb30c', 1, 'viewer', 'email', NOW(), NOW(), NOW()),\n  ('user-f5e89289ce942e2a', 'admin_test', 'admin@test.com', '809185ed8386cdb1f1827c9b18de08c56ee24b864f3647f58c96d4ff6340c0db', '6e29d974389a7877ea554d47f4605c90', 1, 'admin', 'email', NOW(), NOW(), NOW());\n\nSELECT id, username, email, role, emailVerified FROM users WHERE username IN ('treeloko', 'streamer_test', 'viewer_test', 'admin_test');\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3YXoXGPLXt3wWhf.root --database nqydgfj3CzwtjtyHoTRdFv --execute \nDELETE FROM users WHERE username IN ('streamer_test', 'viewer_test', 'admin_test');\n\nINSERT INTO users (openId, username, email, passwordHash, passwordSalt, emailVerified, role, loginMethod, createdAt, updatedAt, lastSignedIn) VALUES\n  ('user-e6b2c2389fafb56e', 'streamer_test', 'streamer@test.com', '5f34e5daffb5d58486bcd0913d4802bcf34a51f444e003ab742995e68fdab15d', '666b56b26a013a10af4c7a61ce88a6a2', 1, 'streamer', 'email', NOW(), NOW(), NOW()),\n  ('user-c74414588eab6ff9', 'viewer_test', 'viewer@test.com', '4d64c54006198f11babe517c6d2af84199aeefdbb2a32bfbd2f9d7d84501171b', '4369dd29251205b87297a123c6dfb30c', 1, 'viewer', 'email', NOW(), NOW(), NOW()),\n  ('user-f5e89289ce942e2a', 'admin_test', 'admin@test.com', '809185ed8386cdb1f1827c9b18de08c56ee24b864f3647f58c96d4ff6340c0db', '6e29d974389a7877ea554d47f4605c90', 1, 'admin', 'email', NOW(), NOW(), NOW());\n\nSELECT id, username, email, role, emailVerified FROM users WHERE username IN ('treeloko', 'streamer_test', 'viewer_test', 'admin_test');\n",
+  "rows": [
+    {
+      "id": "840001",
+      "username": "treeloko",
+      "email": "treeloko@gmail.com",
+      "role": "user",
+      "emailVerified": "1"
+    },
+    {
+      "id": "840008",
+      "username": "streamer_test",
+      "email": "streamer@test.com",
+      "role": "streamer",
+      "emailVerified": "1"
+    },
+    {
+      "id": "840009",
+      "username": "viewer_test",
+      "email": "viewer@test.com",
+      "role": "viewer",
+      "emailVerified": "1"
+    },
+    {
+      "id": "840010",
+      "username": "admin_test",
+      "email": "admin@test.com",
+      "role": "admin",
+      "emailVerified": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tusername\temail\trole\temailVerified\n840001\ttreeloko\ttreeloko@gmail.com\tuser\t1\n840008\tstreamer_test\tstreamer@test.com\tstreamer\t1\n840009\tviewer_test\tviewer@test.com\tviewer\t1\n840010\tadmin_test\tadmin@test.com\tadmin\t1\n",
+  "stderr": "",
+  "execution_time_ms": 223
+}

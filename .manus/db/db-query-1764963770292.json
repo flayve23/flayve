@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE users SET passwordHash = '980c2cc3d23ae180ac157311dc7dd4c1afbcb8a6767e07713bf36fecc1e6b3b3' WHERE email = 'streamer@test.com';\nUPDATE users SET passwordHash = '619e0259ecf7d6766eaff0c75d98624de13804562a382c24149659a5418547b2' WHERE email = 'viewer@test.com';\nUPDATE users SET passwordHash = '2251e0f30d09a45a05c939e833e851cc9a11b3543d40851498d538a0ee4bc3b7' WHERE email = 'admin@test.com';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3YXoXGPLXt3wWhf.root --database nqydgfj3CzwtjtyHoTRdFv --execute UPDATE users SET passwordHash = '980c2cc3d23ae180ac157311dc7dd4c1afbcb8a6767e07713bf36fecc1e6b3b3' WHERE email = 'streamer@test.com';\nUPDATE users SET passwordHash = '619e0259ecf7d6766eaff0c75d98624de13804562a382c24149659a5418547b2' WHERE email = 'viewer@test.com';\nUPDATE users SET passwordHash = '2251e0f30d09a45a05c939e833e851cc9a11b3543d40851498d538a0ee4bc3b7' WHERE email = 'admin@test.com';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 145
+}

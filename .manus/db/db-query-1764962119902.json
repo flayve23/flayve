@@ -1,0 +1,38 @@
+{
+  "query": "\n-- Limpar usuários antigos\nDELETE FROM users WHERE username IN ('streamer_test', 'viewer_test', 'admin_test');\n\n-- Criar usuários com senhas corretas\nINSERT INTO users (openId, username, email, passwordHash, passwordSalt, emailVerified, role, loginMethod, createdAt, updatedAt, lastSignedIn)\nVALUES \n  ('user-streamer-test', 'streamer_test', 'streamer@test.com', 'e15f96a137c1d66829b523076851be1c5bc3128b564c6455b5ffd5fead69ff3d', 'f89ffa4529e241cca96fed2d36cba711', 1, 'streamer', 'email', NOW(), NOW(), NOW()),\n  ('user-viewer-test', 'viewer_test', 'viewer@test.com', '7032fe3a37f9222963d0e5f67eca793e6fbc9f15ac555a4a24f3ec0c61cbbd78', '777abc323871fc7d634a61eeaaee317f', 1, 'viewer', 'email', NOW(), NOW(), NOW()),\n  ('user-admin-test', 'admin_test', 'admin@test.com', '82a9b688142e07cc908a3e4deef2077bab49fb22e4dba95744ab75abe6a94158', '238f52a16d19c7a5eb602ee0ab2ef301', 1, 'admin', 'email', NOW(), NOW(), NOW());\n\n-- Retornar usuários criados\nSELECT id, username, email, role, emailVerified FROM users WHERE username IN ('treeloko', 'streamer_test', 'viewer_test', 'admin_test');\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3YXoXGPLXt3wWhf.root --database nqydgfj3CzwtjtyHoTRdFv --execute \n-- Limpar usuários antigos\nDELETE FROM users WHERE username IN ('streamer_test', 'viewer_test', 'admin_test');\n\n-- Criar usuários com senhas corretas\nINSERT INTO users (openId, username, email, passwordHash, passwordSalt, emailVerified, role, loginMethod, createdAt, updatedAt, lastSignedIn)\nVALUES \n  ('user-streamer-test', 'streamer_test', 'streamer@test.com', 'e15f96a137c1d66829b523076851be1c5bc3128b564c6455b5ffd5fead69ff3d', 'f89ffa4529e241cca96fed2d36cba711', 1, 'streamer', 'email', NOW(), NOW(), NOW()),\n  ('user-viewer-test', 'viewer_test', 'viewer@test.com', '7032fe3a37f9222963d0e5f67eca793e6fbc9f15ac555a4a24f3ec0c61cbbd78', '777abc323871fc7d634a61eeaaee317f', 1, 'viewer', 'email', NOW(), NOW(), NOW()),\n  ('user-admin-test', 'admin_test', 'admin@test.com', '82a9b688142e07cc908a3e4deef2077bab49fb22e4dba95744ab75abe6a94158', '238f52a16d19c7a5eb602ee0ab2ef301', 1, 'admin', 'email', NOW(), NOW(), NOW());\n\n-- Retornar usuários criados\nSELECT id, username, email, role, emailVerified FROM users WHERE username IN ('treeloko', 'streamer_test', 'viewer_test', 'admin_test');\n",
+  "rows": [
+    {
+      "id": "840001",
+      "username": "treeloko",
+      "email": "treeloko@gmail.com",
+      "role": "user",
+      "emailVerified": "1"
+    },
+    {
+      "id": "840005",
+      "username": "streamer_test",
+      "email": "streamer@test.com",
+      "role": "streamer",
+      "emailVerified": "1"
+    },
+    {
+      "id": "840006",
+      "username": "viewer_test",
+      "email": "viewer@test.com",
+      "role": "viewer",
+      "emailVerified": "1"
+    },
+    {
+      "id": "840007",
+      "username": "admin_test",
+      "email": "admin@test.com",
+      "role": "admin",
+      "emailVerified": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tusername\temail\trole\temailVerified\n840001\ttreeloko\ttreeloko@gmail.com\tuser\t1\n840005\tstreamer_test\tstreamer@test.com\tstreamer\t1\n840006\tviewer_test\tviewer@test.com\tviewer\t1\n840007\tadmin_test\tadmin@test.com\tadmin\t1\n",
+  "stderr": "",
+  "execution_time_ms": 97
+}

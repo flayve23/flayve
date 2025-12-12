@@ -1,0 +1,35 @@
+CREATE TABLE `kycVerifications` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`userId` int NOT NULL,
+	`fullName` varchar(255) NOT NULL,
+	`cpf` varchar(11) NOT NULL,
+	`dateOfBirth` date NOT NULL,
+	`nationality` varchar(100) DEFAULT 'Brasileira',
+	`address` text NOT NULL,
+	`city` varchar(100) NOT NULL,
+	`state` varchar(2) NOT NULL,
+	`zipCode` varchar(8) NOT NULL,
+	`bankName` varchar(100) NOT NULL,
+	`bankCode` varchar(3) NOT NULL,
+	`accountType` enum('checking','savings') NOT NULL,
+	`accountNumber` varchar(20) NOT NULL,
+	`accountDigit` varchar(2),
+	`branchCode` varchar(5) NOT NULL,
+	`accountHolder` varchar(255) NOT NULL,
+	`idDocumentType` enum('rg','cnh','passport') NOT NULL,
+	`idDocumentUrl` text NOT NULL,
+	`idDocumentNumber` varchar(20) NOT NULL,
+	`proofOfAddressUrl` text NOT NULL,
+	`status` enum('pending','approved','rejected','expired') NOT NULL DEFAULT 'pending',
+	`rejectionReason` text,
+	`submittedAt` timestamp NOT NULL DEFAULT (now()),
+	`reviewedAt` timestamp,
+	`reviewedBy` int,
+	`expiresAt` timestamp,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `kycVerifications_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+ALTER TABLE `kycVerifications` ADD CONSTRAINT `kycVerifications_userId_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `kycVerifications` ADD CONSTRAINT `kycVerifications_reviewedBy_users_id_fk` FOREIGN KEY (`reviewedBy`) REFERENCES `users`(`id`) ON DELETE no action ON UPDATE no action;

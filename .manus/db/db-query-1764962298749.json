@@ -1,0 +1,46 @@
+{
+  "query": "\nSELECT id, username, email, passwordHash, passwordSalt, emailVerified, role FROM users WHERE username IN ('streamer_test', 'viewer_test', 'admin_test', 'treeloko');\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3YXoXGPLXt3wWhf.root --database nqydgfj3CzwtjtyHoTRdFv --execute \nSELECT id, username, email, passwordHash, passwordSalt, emailVerified, role FROM users WHERE username IN ('streamer_test', 'viewer_test', 'admin_test', 'treeloko');\n",
+  "rows": [
+    {
+      "id": "840005",
+      "username": "streamer_test",
+      "email": "streamer@test.com",
+      "passwordHash": "e15f96a137c1d66829b523076851be1c5bc3128b564c6455b5ffd5fead69ff3d",
+      "passwordSalt": "f89ffa4529e241cca96fed2d36cba711",
+      "emailVerified": "1",
+      "role": "streamer"
+    },
+    {
+      "id": "840006",
+      "username": "viewer_test",
+      "email": "viewer@test.com",
+      "passwordHash": "7032fe3a37f9222963d0e5f67eca793e6fbc9f15ac555a4a24f3ec0c61cbbd78",
+      "passwordSalt": "777abc323871fc7d634a61eeaaee317f",
+      "emailVerified": "1",
+      "role": "viewer"
+    },
+    {
+      "id": "840007",
+      "username": "admin_test",
+      "email": "admin@test.com",
+      "passwordHash": "82a9b688142e07cc908a3e4deef2077bab49fb22e4dba95744ab75abe6a94158",
+      "passwordSalt": "238f52a16d19c7a5eb602ee0ab2ef301",
+      "emailVerified": "1",
+      "role": "admin"
+    },
+    {
+      "id": "840001",
+      "username": "treeloko",
+      "email": "treeloko@gmail.com",
+      "passwordHash": "1b0e86587c62bfa1bde18218cd61a28210dc335a91d0c72544f94fd5e0eb1f33",
+      "passwordSalt": "03c4524954240cee298e998df0ff0742",
+      "emailVerified": "1",
+      "role": "user"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tusername\temail\tpasswordHash\tpasswordSalt\temailVerified\trole\n840005\tstreamer_test\tstreamer@test.com\te15f96a137c1d66829b523076851be1c5bc3128b564c6455b5ffd5fead69ff3d\tf89ffa4529e241cca96fed2d36cba711\t1\tstreamer\n840006\tviewer_test\tviewer@test.com\t7032fe3a37f9222963d0e5f67eca793e6fbc9f15ac555a4a24f3ec0c61cbbd78\t777abc323871fc7d634a61eeaaee317f\t1\tviewer\n840007\tadmin_test\tadmin@test.com\t82a9b688142e07cc908a3e4deef2077bab49fb22e4dba95744ab75abe6a94158\t238f52a16d19c7a5eb602ee0ab2ef301\t1\tadmin\n840001\ttreeloko\ttreeloko@gmail.com\t1b0e86587c62bfa1bde18218cd61a28210dc335a91d0c72544f94fd5e0eb1f33\t03c4524954240cee298e998df0ff0742\t1\tuser\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

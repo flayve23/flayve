@@ -1,0 +1,31 @@
+{
+  "query": "SELECT id, email, username, role, emailVerified FROM users WHERE email IN ('streamer@test.com', 'viewer@test.com', 'admin@test.com') LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3YXoXGPLXt3wWhf.root --database nqydgfj3CzwtjtyHoTRdFv --execute SELECT id, email, username, role, emailVerified FROM users WHERE email IN ('streamer@test.com', 'viewer@test.com', 'admin@test.com') LIMIT 5;",
+  "rows": [
+    {
+      "id": "900006",
+      "email": "streamer@test.com",
+      "username": "streamer_test",
+      "role": "streamer",
+      "emailVerified": "1"
+    },
+    {
+      "id": "900007",
+      "email": "viewer@test.com",
+      "username": "viewer_test",
+      "role": "viewer",
+      "emailVerified": "1"
+    },
+    {
+      "id": "900008",
+      "email": "admin@test.com",
+      "username": "admin_test",
+      "role": "admin",
+      "emailVerified": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\temail\tusername\trole\temailVerified\n900006\tstreamer@test.com\tstreamer_test\tstreamer\t1\n900007\tviewer@test.com\tviewer_test\tviewer\t1\n900008\tadmin@test.com\tadmin_test\tadmin\t1\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

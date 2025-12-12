@@ -1,0 +1,38 @@
+{
+  "query": "\n-- Verificar e atualizar treeloko\nUPDATE users SET emailVerified = 1 WHERE username = 'treeloko';\n\n-- Criar usuários de teste se não existirem\nINSERT IGNORE INTO users (openId, username, email, passwordHash, passwordSalt, emailVerified, role, loginMethod, createdAt, updatedAt, lastSignedIn)\nVALUES \n  ('user-streamer-test', 'streamer_test', 'streamer@test.com', SHA2(CONCAT('senha123', 'salt123'), 256), 'salt123', 1, 'streamer', 'email', NOW(), NOW(), NOW()),\n  ('user-viewer-test', 'viewer_test', 'viewer@test.com', SHA2(CONCAT('senha123', 'salt456'), 256), 'salt456', 1, 'viewer', 'email', NOW(), NOW(), NOW()),\n  ('user-admin-test', 'admin_test', 'admin@test.com', SHA2(CONCAT('senha123', 'salt789'), 256), 'salt789', 1, 'admin', 'email', NOW(), NOW(), NOW());\n\n-- Retornar usuários criados/verificados\nSELECT id, username, email, role, emailVerified FROM users WHERE username IN ('treeloko', 'streamer_test', 'viewer_test', 'admin_test');\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3YXoXGPLXt3wWhf.root --database nqydgfj3CzwtjtyHoTRdFv --execute \n-- Verificar e atualizar treeloko\nUPDATE users SET emailVerified = 1 WHERE username = 'treeloko';\n\n-- Criar usuários de teste se não existirem\nINSERT IGNORE INTO users (openId, username, email, passwordHash, passwordSalt, emailVerified, role, loginMethod, createdAt, updatedAt, lastSignedIn)\nVALUES \n  ('user-streamer-test', 'streamer_test', 'streamer@test.com', SHA2(CONCAT('senha123', 'salt123'), 256), 'salt123', 1, 'streamer', 'email', NOW(), NOW(), NOW()),\n  ('user-viewer-test', 'viewer_test', 'viewer@test.com', SHA2(CONCAT('senha123', 'salt456'), 256), 'salt456', 1, 'viewer', 'email', NOW(), NOW(), NOW()),\n  ('user-admin-test', 'admin_test', 'admin@test.com', SHA2(CONCAT('senha123', 'salt789'), 256), 'salt789', 1, 'admin', 'email', NOW(), NOW(), NOW());\n\n-- Retornar usuários criados/verificados\nSELECT id, username, email, role, emailVerified FROM users WHERE username IN ('treeloko', 'streamer_test', 'viewer_test', 'admin_test');\n",
+  "rows": [
+    {
+      "id": "840001",
+      "username": "treeloko",
+      "email": "treeloko@gmail.com",
+      "role": "user",
+      "emailVerified": "1"
+    },
+    {
+      "id": "840002",
+      "username": "streamer_test",
+      "email": "streamer@test.com",
+      "role": "streamer",
+      "emailVerified": "1"
+    },
+    {
+      "id": "840003",
+      "username": "viewer_test",
+      "email": "viewer@test.com",
+      "role": "viewer",
+      "emailVerified": "1"
+    },
+    {
+      "id": "840004",
+      "username": "admin_test",
+      "email": "admin@test.com",
+      "role": "admin",
+      "emailVerified": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tusername\temail\trole\temailVerified\n840001\ttreeloko\ttreeloko@gmail.com\tuser\t1\n840002\tstreamer_test\tstreamer@test.com\tstreamer\t1\n840003\tviewer_test\tviewer@test.com\tviewer\t1\n840004\tadmin_test\tadmin@test.com\tadmin\t1\n",
+  "stderr": "",
+  "execution_time_ms": 172
+}
