@@ -1,7 +1,6 @@
 import helmet from "helmet";
 import { Express, Request, Response, NextFunction } from "express";
 import crypto from "crypto";
-import CryptoJS from "crypto-js";
 
 declare global {
   namespace Express {
@@ -29,12 +28,6 @@ export function setupHelmet(app: Express) {
     } )
   );
 }
-
-// Dummy rate limiters (desabilitados temporariamente)
-export const globalLimiter = (req: any, res: any, next: any) => next();
-export const authLimiter = (req: any, res: any, next: any) => next();
-export const paymentLimiter = (req: any, res: any, next: any) => next();
-export const kycLimiter = (req: any, res: any, next: any) => next();
 
 export function csrfTokenMiddleware(req: Request, res: Response, next: NextFunction) {
   if (!req.session) {
@@ -70,11 +63,16 @@ export function sanitizeInput(req: Request, res: Response, next: NextFunction) {
   if (req.body) {
     for (const key in req.body) {
       if (typeof req.body[key] === "string") {
-        req.body[key] = req.body[key]
-          .replace(/[<>]/g, "")
-          .trim();
+        req.body[key] = req.body[key].replace(/[<>]/g, "").trim();
       }
     }
   }
+  next();
+}
+
+export function securityHeadersMiddleware(req: Request, res: Response, next: NextFunction) {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
   next();
 }
