@@ -114,6 +114,17 @@ async function startServer() {
       methods: ["GET", "POST"],
     },
   });
+  import cors from "cors";
+
+// Adicione isto ANTES de setupHelmet
+app.use(cors({
+  origin: [
+    "https://flayve-6lwu2fi17-felipes-projects-30ef9130.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:5173"
+  ],
+  credentials: true
+} ));
   // Segurança: Helmet para headers HTTP
   setupHelmet(app);
 
