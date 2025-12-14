@@ -47,47 +47,57 @@ export function setupHelmet(app: Express) {
 /**
  * Rate limiting por IP
  */
+import { ipKeyGenerator } from 'express-rate-limit';
+
 export const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // 100 requisições por janela
-  message: "Muitas requisições deste IP, tente novamente mais tarde.",
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests',
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => {
-    // Não aplicar rate limit em health checks
-    return req.path === "/health";
-  },
+  keyGenerator: ipKeyGenerator,
 });
 
 /**
  * Rate limiting mais restritivo para login/registro
  */
-export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // 5 tentativas por janela
-  message: "Muitas tentativas de login. Tente novamente em 15 minutos.",
-  skipSuccessfulRequests: true,
-  keyGenerator: (req) => {
-    return req.body?.email || req.ip || "unknown";
-  },
+import { ipKeyGenerator } from 'express-rate-limit';
+
+export const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests',
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: ipKeyGenerator,
 });
 
 /**
  * Rate limiting para APIs de pagamento
  */
-export const paymentLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hora
-  max: 10, // 10 requisições por hora
-  message: "Limite de requisições de pagamento excedido.",
+import { ipKeyGenerator } from 'express-rate-limit';
+
+export const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests',
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: ipKeyGenerator,
 });
 
 /**
  * Rate limiting para KYC
  */
-export const kycLimiter = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000, // 24 horas
-  max: 3, // 3 submissões por dia
-  message: "Você já atingiu o limite de submissões de KYC por dia.",
+import { ipKeyGenerator } from 'express-rate-limit';
+
+export const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests',
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: ipKeyGenerator,
 });
 
 /**
