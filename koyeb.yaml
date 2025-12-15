@@ -1,0 +1,34 @@
+services:
+  flayve:
+    type: web
+    name: flayve
+    
+    # Build configuration
+    build:
+      builder: docker
+      dockerfile: Dockerfile
+    
+    # Environment variables
+    env:
+      NODE_ENV: production
+      PORT: "8000"
+    
+    # Port configuration
+    ports:
+      - port: 8000
+        protocol: http
+    
+    # Health check
+    healthcheck:
+      path: /health
+      period_seconds: 30
+      timeout_seconds: 5
+      initial_delay_seconds: 10
+      success_threshold: 1
+      failure_threshold: 3
+    
+    # Scaling
+    scaling:
+      min_instances: 1
+      max_instances: 3
+      target_cpu_utilization_percent: 70

@@ -1809,7 +1809,6 @@ var init_mercadopago = __esm({
 import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
-import net from "net";
 import fs2 from "fs";
 import path3 from "path";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -3278,6 +3277,13 @@ var globalLimiter = rateLimit({
   legacyHeaders: false,
   skip: (req) => {
     return req.path === "/health";
+  },
+  keyGenerator: (req) => {
+    const forwarded = req.headers["x-forwarded-for"];
+    if (forwarded) {
+      return typeof forwarded === "string" ? forwarded.split(",")[0].trim() : forwarded[0];
+    }
+    return req.ip || "unknown";
   }
 });
 var authLimiter = rateLimit({
@@ -3288,7 +3294,9 @@ var authLimiter = rateLimit({
   message: "Muitas tentativas de login. Tente novamente em 15 minutos.",
   skipSuccessfulRequests: true,
   keyGenerator: (req) => {
-    return req.body?.email || req.ip || "unknown";
+    const forwarded = req.headers["x-forwarded-for"];
+    const ip = forwarded ? typeof forwarded === "string" ? forwarded.split(",")[0].trim() : forwarded[0] : req.ip || "unknown";
+    return req.body?.email || ip;
   }
 });
 var paymentLimiter = rateLimit({
@@ -3296,14 +3304,22 @@ var paymentLimiter = rateLimit({
   // 1 hora
   max: 10,
   // 10 requisições por hora
-  message: "Limite de requisi\xE7\xF5es de pagamento excedido."
+  message: "Limite de requisi\xE7\xF5es de pagamento excedido.",
+  keyGenerator: (req) => {
+    const forwarded = req.headers["x-forwarded-for"];
+    return forwarded ? typeof forwarded === "string" ? forwarded.split(",")[0].trim() : forwarded[0] : req.ip || "unknown";
+  }
 });
 var kycLimiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1e3,
   // 24 horas
   max: 3,
   // 3 submissões por dia
-  message: "Voc\xEA j\xE1 atingiu o limite de submiss\xF5es de KYC por dia."
+  message: "Voc\xEA j\xE1 atingiu o limite de submiss\xF5es de KYC por dia.",
+  keyGenerator: (req) => {
+    const forwarded = req.headers["x-forwarded-for"];
+    return forwarded ? typeof forwarded === "string" ? forwarded.split(",")[0].trim() : forwarded[0] : req.ip || "unknown";
+  }
 });
 function sanitizeInput(req, res, next) {
   if (req.body) {
@@ -3328,23 +3344,6 @@ function securityHeadersMiddleware(req, res, next) {
 }
 
 // server/_core/index.ts
-function isPortAvailable(port) {
-  return new Promise((resolve) => {
-    const server = net.createServer();
-    server.listen(port, () => {
-      server.close(() => resolve(true));
-    });
-    server.on("error", () => resolve(false));
-  });
-}
-async function findAvailablePort(startPort = 3e3) {
-  for (let port = startPort; port < startPort + 20; port++) {
-    if (await isPortAvailable(port)) {
-      return port;
-    }
-  }
-  throw new Error(`No available port found starting from ${startPort}`);
-}
 async function startServer() {
   const app = express();
   const server = createServer(app);
@@ -3415,8 +3414,26 @@ async function startServer() {
       methods: ["GET", "POST"]
     }
   });
+  app.use((req, res, next) => {
+    const allowedOrigins = [
+      "https://flayve-1f4j79n20-felipes-projects-30ef9130.vercel.app",
+      "https://flayve-6lwu2fi17-felipes-projects-30ef9130.vercel.app",
+      "http://localhost:3000",
+      "http://localhost:5173"
+    ];
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    if (req.method === "OPTIONS") {
+      return res.sendStatus(200);
+    }
+    next();
+  });
   setupHelmet(app);
-  app.use(globalLimiter);
   app.use(securityHeadersMiddleware);
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
@@ -3431,7 +3448,6 @@ async function startServer() {
       console.log(`[Socket.io] User disconnected: ${socket.id}`);
     });
   });
-  app.use("/api/oauth", authLimiter);
   registerOAuthRoutes(app);
   app.post("/api/webhooks/mercadopago", async (req, res) => {
     try {
@@ -3446,7 +3462,7 @@ async function startServer() {
     }
   });
   const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
-  app.post("/api/upload", kycLimiter, upload.single("file"), async (req, res) => {
+  app.post("/api/upload", upload.single("file"), async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ error: "No file provided" });
@@ -3482,26 +3498,17 @@ async function startServer() {
       createContext
     })
   );
+  serveStatic(app);
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
-  } else {
-    serveStatic(app);
   }
-  app.get("*", (_req, res) => {
-    const indexPath = path3.resolve(process.cwd(), "dist", "public", "index.html");
-    if (fs2.existsSync(indexPath)) {
-      res.sendFile(indexPath);
-    } else {
-      res.status(404).json({ error: "index.html not found", path: indexPath });
-    }
-  });
-  const preferredPort = parseInt(process.env.PORT || "3000");
-  const port = await findAvailablePort(preferredPort);
-  if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
-  }
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 8e3;
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });
+  return server;
 }
-startServer().catch(console.error);
+startServer().catch((error) => {
+  console.error("Failed to start server:", error);
+  process.exit(1);
+});

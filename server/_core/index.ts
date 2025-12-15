@@ -12,7 +12,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import multer from "multer";
 import { storagePut } from "../storage";
-import { setupHelmet, globalLimiter, authLimiter, paymentLimiter, kycLimiter, sanitizeInput, securityHeadersMiddleware } from "./security";
+import { setupHelmet, sanitizeInput, securityHeadersMiddleware } from "./security";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -114,24 +114,34 @@ async function startServer() {
       methods: ["GET", "POST"],
     },
   });
-  import cors from "cors";
-
-// Adicione isto ANTES de setupHelmet
-app.use(cors({
-  origin: [
-    "https://flayve-6lwu2fi17-felipes-projects-30ef9130.vercel.app",
-    "http://localhost:3000",
-    "http://localhost:5173"
-  ],
-  credentials: true
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
-} ));
+  
+  // CORS Configuration - Manual implementation
+  app.use((req, res, next) => {
+    const allowedOrigins = [
+      "https://flayve-1f4j79n20-felipes-projects-30ef9130.vercel.app",
+      "https://flayve-6lwu2fi17-felipes-projects-30ef9130.vercel.app",
+      "http://localhost:3000",
+      "http://localhost:5173"
+    ];
+    
+    const origin = req.headers.origin as string;
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+    
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    
+    if (req.method === "OPTIONS") {
+      return res.sendStatus(200);
+    }
+    
+    next();
+  });
+  
   // Segurança: Helmet para headers HTTP
   setupHelmet(app);
-
-  // Segurança: Rate limiting global
-  app.use(globalLimiter);
 
   // Segurança: Headers customizados
   app.use(securityHeadersMiddleware);
@@ -157,8 +167,7 @@ app.use(cors({
     });
   });
 
-  // OAuth routes com rate limiting
-  app.use('/api/oauth', authLimiter);
+  // OAuth routes
   registerOAuthRoutes(app);
 
   // Webhook endpoint for Mercado Pago
@@ -175,9 +184,9 @@ app.use(cors({
     }
   });
   
-  // File upload endpoint com rate limiting
+  // File upload endpoint
   const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
-  app.post('/api/upload', kycLimiter, upload.single('file'), async (req, res) => {
+  app.post('/api/upload', upload.single('file'), async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ error: 'No file provided' });
@@ -213,7 +222,7 @@ app.use(cors({
     });
   });
 
-  // tRPC API - MUST be before SPA fallback
+  // tRPC API endpoint
   app.use(
     "/api/trpc",
     createExpressMiddleware({
@@ -222,34 +231,25 @@ app.use(cors({
     })
   );
 
-  // development mode uses Vite, production mode uses static files
+  // Serve static files from dist/public
+  serveStatic(app);
+
+  // Setup Vite for development
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
-  } else {
-    serveStatic(app);
   }
 
-  // SPA Fallback: qualquer rota que nao seja encontrada, retorna index.html
-  // MUST be last to not interfere with API routes
-  app.get('*', (_req, res) => {
-    const indexPath = path.resolve(process.cwd(), 'dist', 'public', 'index.html');
-    if (fs.existsSync(indexPath)) {
-      res.sendFile(indexPath);
-    } else {
-      res.status(404).json({ error: 'index.html not found', path: indexPath });
-    }
-  });
-
-  const preferredPort = parseInt(process.env.PORT || "3000");
-  const port = await findAvailablePort(preferredPort);
-
-  if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
-  }
-
+  // Find available port and start server
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 8000;
+  
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });
+
+  return server;
 }
 
-startServer().catch(console.error);
+startServer().catch((error) => {
+  console.error("Failed to start server:", error);
+  process.exit(1);
+});
