@@ -1,5 +1,4 @@
 import helmet from "helmet";
-import rateLimit from "express-rate-limit";
 import { Express, Request, Response, NextFunction } from "express";
 import crypto from "crypto";
 import CryptoJS from "crypto-js";
