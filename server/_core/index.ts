@@ -1,3 +1,8 @@
+const app = express();
+
+// ADICIONE ESTA LINHA AQUI:
+app.set('trust proxy', 1);
+
 import "dotenv/config";
 import express from "express";
 import { createServer } from "http";
