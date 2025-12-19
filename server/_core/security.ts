@@ -22,8 +22,9 @@ export function setupHelmet(app: Express) {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
           styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
-          imgSrc: ["'self'", "data:", "https:"],
+          styleSrcElem: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
           fontSrc: ["'self'", "fonts.gstatic.com"],
+          imgSrc: ["'self'", "data:", "https:"],
           connectSrc: ["'self'", "https:", "wss:"],
           frameSrc: ["'self'"],
           objectSrc: ["'none'"],
@@ -31,7 +32,7 @@ export function setupHelmet(app: Express) {
         },
       },
       hsts: {
-        maxAge: 31536000, // 1 ano
+        maxAge: 31536000,
         includeSubDomains: true,
         preload: true,
       },
@@ -51,15 +52,11 @@ export function csrfTokenMiddleware(req: Request, res: Response, next: NextFunct
     req.session = {};
   }
 
-  // Gerar token CSRF se não existir
   if (!req.session.csrfToken) {
     req.session.csrfToken = crypto.randomBytes(32).toString("hex");
   }
 
-  // Adicionar token ao response header
   res.setHeader("X-CSRF-Token", req.session.csrfToken);
-
-  // Adicionar ao locals para templates
   (res.locals as any).csrfToken = req.session.csrfToken;
 
   next();
@@ -69,12 +66,10 @@ export function csrfTokenMiddleware(req: Request, res: Response, next: NextFunct
  * Middleware para validar CSRF token
  */
 export function validateCsrfToken(req: Request, res: Response, next: NextFunction) {
-  // Pular validação para GET, HEAD, OPTIONS
   if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
     return next();
   }
 
-  // Pular validação para health check
   if (req.path === "/health") {
     return next();
   }
@@ -96,13 +91,11 @@ export function validateCsrfToken(req: Request, res: Response, next: NextFunctio
  * Middleware para sanitizar inputs
  */
 export function sanitizeInput(req: Request, res: Response, next: NextFunction) {
-  // Sanitizar strings em req.body
   if (req.body) {
     for (const key in req.body) {
       if (typeof req.body[key] === "string") {
-        // Remover caracteres perigosos
         req.body[key] = req.body[key]
-          .replace(/[<>]/g, "") // Remove < e >
+          .replace(/[<>]/g, "")
           .trim();
       }
     }
@@ -115,19 +108,10 @@ export function sanitizeInput(req: Request, res: Response, next: NextFunction) {
  * Middleware para adicionar security headers
  */
 export function securityHeadersMiddleware(req: Request, res: Response, next: NextFunction) {
-  // Prevenir clickjacking
   res.setHeader("X-Frame-Options", "DENY");
-
-  // Prevenir MIME type sniffing
   res.setHeader("X-Content-Type-Options", "nosniff");
-
-  // Ativar XSS protection
   res.setHeader("X-XSS-Protection", "1; mode=block");
-
-  // Política de referrer
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-
-  // Permissions policy (antigo Feature-Policy)
   res.setHeader(
     "Permissions-Policy",
     "geolocation=(), microphone=(), camera=(), payment=()"
@@ -140,16 +124,12 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
  * Validar CPF com algoritmo correto
  */
 export function isValidCPF(cpf: string): boolean {
-  // Remover caracteres especiais
   cpf = cpf.replace(/\D/g, "");
 
-  // Verificar se tem 11 dígitos
   if (cpf.length !== 11) return false;
 
-  // Verificar se não é uma sequência repetida
   if (/^(\d)\1{10}$/.test(cpf)) return false;
 
-  // Calcular primeiro dígito verificador
   let sum = 0;
   let remainder;
 
@@ -162,7 +142,6 @@ export function isValidCPF(cpf: string): boolean {
 
   if (remainder !== parseInt(cpf.substring(9, 10))) return false;
 
-  // Calcular segundo dígito verificador
   sum = 0;
   for (let i = 1; i <= 10; i++) {
     sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
