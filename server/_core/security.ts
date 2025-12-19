@@ -17,29 +17,7 @@ declare global {
 export function setupHelmet(app: Express) {
   app.use(
     helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
-          styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
-          styleSrcElem: ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
-          fontSrc: ["'self'", "fonts.gstatic.com"],
-          imgSrc: ["'self'", "data:", "https:"],
-          connectSrc: ["'self'", "https:", "wss:"],
-          frameSrc: ["'self'"],
-          objectSrc: ["'none'"],
-          ...(process.env.NODE_ENV === "production" && { upgradeInsecureRequests: [] } ),
-        },
-      },
-      hsts: {
-        maxAge: 31536000,
-        includeSubDomains: true,
-        preload: true,
-      },
-      frameguard: { action: "deny" },
-      noSniff: true,
-      xssFilter: true,
-      referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+      contentSecurityPolicy: false, // Desabilitar CSP temporariamente para desenvolvimento
     })
   );
 }
@@ -112,10 +90,6 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-XSS-Protection", "1; mode=block");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  res.setHeader(
-    "Permissions-Policy",
-    "geolocation=(), microphone=(), camera=(), payment=()"
-  );
 
   next();
 }
